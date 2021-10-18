@@ -85,6 +85,25 @@ export function allPromises(){
 }
 
 export function allSettled(){
+    let categories = axios.get("http://localhost:3000/itemCategories");
+    let statuses = axios.get("http://localhost:3000/orderStatuses");
+    let userTypes = axios.get("http://localhost:3000/userTypes");
+    let addressTypes = axios.get("http://localhost:3000/addressTypess");
+
+    // queue all promises and wait
+    Promise.allSettled([categories, statuses, userTypes, addressTypes])
+        .then((values) => {
+            let results = values.map(v => {
+                if (v.status === "fulfilled") {
+                    return `Fulfilled: ${JSON.stringify(v.value.data[0])} ` ;
+                }
+                return `Rejected: ${v.reason.message} ` ;
+            })
+            setText(results);
+        })
+        .catch(reasons => {
+            setText(reasons);
+        })
 }
 
 export function race(){
