@@ -45,4 +45,24 @@ export function chainCatch() {
 }
 
 export function final() {
+    showWaiting();
+    axios.get("httpy://localhost:3000/orders/1")
+    .then(({data}) => {
+         axios.get(`http://localhost:3000/addresses/${data.shippingAddress}`);
+         throw new Error("Error!");
+    })
+    .catch(err => {
+        setText(err);
+        throw new Error("Second Error")
+    })
+    .then(({data}) => {
+        setText(`City: ${data.city}`)
+    })
+    .catch(err => setText(err));
+    .finally(() => {
+        setTimeout( () => {
+            hideWaiting();
+        }, 1500);
+        appendText(" -- Completely Done")
+    })
 }
