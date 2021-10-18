@@ -44,9 +44,44 @@ export function clearIntervalChain(){
 
 
 export function xhr(){
+    let request = new Promise ((resolve, reject) => {
+        let xhr = new XMLHttpRequest();
+        xhr.open("GET", "http://localhost:3000/users/7");
+        xhr.onload = () => {
+            if(xhr.status === 200) {
+                resolve(xhr.responseText);
+            } else {
+                reject(xhr.statusText)
+            }
+        }
+        xhr.onerror = () => reject("Request Failed");
+        xhr.send;
+    });
+
+    request.then(result => setText(result))
+    .catch(reason => setText(reason));
 }
 
+//several functions running at same time
 export function allPromises(){
+    let categories = axios.get("http://localhost:3000/itemCategories");
+    let statuses = axios.get("http://localhost:3000/orderStatuses");
+    let userTypes = axios.get("http://localhost:3000/userTypes");
+    let addressTypes = axios.get("http://localhost:3000/addressTypess");
+
+    // queue all promises and wait
+    Promise.all([categories, statuses, userTypes, addressTypes])
+        .then(([cat, stat,type, address]) => {
+            setText("");
+
+            appendText(JSON.stringify(cat.data));
+            appendText(JSON.stringify(stat.data));
+            appendText(JSON.stringify(type.data));
+            appendText(JSON.stringify(address.data));
+        })
+        .catch(reasons => {
+            setText(reasons);
+        })
 }
 
 export function allSettled(){
